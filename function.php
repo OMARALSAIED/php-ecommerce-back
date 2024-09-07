@@ -8,7 +8,11 @@ define("MB", 1048576);
 
 function filterRequest($requestname)
 {
-  return  htmlspecialchars(strip_tags($_POST[$requestname]));
+    if (isset($_POST[$requestname])) {
+        return htmlspecialchars(strip_tags($_POST[$requestname]));
+    } else {
+        return null; // or handle it as appropriate
+    }
 }
 
 function getAllData($table, $where = null, $values = null)
@@ -44,9 +48,9 @@ function insertData($table, $data, $json = true)
     $count = $stmt->rowCount();
     if ($json == true) {
     if ($count > 0) {
-        echo json_encode(array("status" => "success"));
+        echo json_encode(array("status"=>"success","message"=>$message));
     } else {
-        echo json_encode(array("status" => "failure"));
+        echo json_encode(array("status"=>"faliure","message"=>$message));
     }
   }
     return $count;
@@ -142,4 +146,42 @@ function checkAuthenticate()
     }
 
     // End 
+}
+
+
+
+
+function sendEmail($to,$title,$body)
+{
+
+$header="From: support@omar al saied"."\n". "cc: omaralsaied@gmail.com ";
+
+
+//mail($to,$title,$body,$header);
+
+echo "success";
+}
+
+
+function   printFailuure($message="non")
+    {
+        echo json_encode(array("status"=>"failure","message"=>$message));
+    }
+
+
+function   printSuccess($message="Yes")
+    {
+        echo json_encode(array("status"=>"success","message"=>$message));
+    }
+    
+function result($count)
+{
+    if($count>0)
+    {
+        printSuccess();
+    }
+    else
+    {
+        printFailuure();
+    }
 }
