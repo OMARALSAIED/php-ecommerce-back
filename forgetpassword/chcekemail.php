@@ -3,7 +3,8 @@
 include "../connect.php";
 include "../function.php";
 
-$email=filterRequest("email");
+
+$email = filterRequest('email');
 
 $verifiyCode = rand(10000, 99999);
 
