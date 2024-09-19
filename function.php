@@ -19,6 +19,14 @@ function getAllData($table, $where = null, $values = null)
 {
     global $con;
     $data = array();
+    if($where==null)
+    {
+        $stmt=$con->prepare("SELECT * FROM $table")
+    }
+    else
+    {
+        $stmt=$con->prepaer("SELECT * FROM $table")
+    }
     $stmt = $con->prepare("SELECT  * FROM $table WHERE   $where ");
     $stmt->execute($values);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -30,6 +38,24 @@ function getAllData($table, $where = null, $values = null)
     }
     return $count;
 }
+
+
+function getData($table, $where = null, $values = null)
+{
+    global $con;
+    $data = array();
+    $stmt = $con->prepare("SELECT  * FROM $table WHERE   $where ");
+    $stmt->execute($values);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $count  = $stmt->rowCount();
+    if ($count > 0){
+        echo json_encode(array("status" => "success", "data" => $data));
+    } else {
+        echo json_encode(array("status" => "failure"));
+    }
+    return $count;
+}
+
 
 function insertData($table, $data, $json = true)
 {
@@ -48,7 +74,7 @@ function insertData($table, $data, $json = true)
     $count = $stmt->rowCount();
     if ($json == true) {
     if ($count > 0) {
-        echo json_encode(array("status"=>"success","message"=>$message));
+        echo json_encode(array("status"=>"success"));
     } else {
         echo json_encode(array("status"=>"faliure","message"=>$message));
     }
@@ -159,7 +185,7 @@ $header="From: support@omar al saied"."\n". "cc: omaralsaied@gmail.com ";
 
 //mail($to,$title,$body,$header);
 
-echo "success";
+
 }
 
 
@@ -173,6 +199,9 @@ function   printSuccess($message="Yes")
     {
         echo json_encode(array("status"=>"success","message"=>$message));
     }
+
+    
+    
     
 function result($count)
 {

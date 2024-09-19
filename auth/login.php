@@ -5,18 +5,18 @@ include "../function.php";
 
 // جلب البيانات من النموذج (POST)
 $email = filterRequest('email');
-$password_user = filterRequest($_POST['password_user']);
+$password_user = sha1($_POST['password_user']); // تشفير كلمة المرور باستخدام sha1
 
 // إعداد الاستعلام للتحقق من وجود البريد الإلكتروني
-$stmt = $con->prepare("SELECT * FROM users WHERE email = ?" );
+$stmt = $con->prepare("SELECT * FROM users WHERE email = ?");
 $stmt->execute(array($email));
 
 // جلب النتائج
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user) {
-    // استخدام password_verify للتحقق من كلمة المرور
-    if (password_verify($password_user, $user['password_user'])) {
+    // التحقق من كلمة المرور
+    if ($password_user === $user['password_user']) {
         // كلمة المرور صحيحة
         echo json_encode([
             "status" => "success",
