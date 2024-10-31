@@ -5,29 +5,24 @@ include "../function.php";
 $categoriesid = filterRequest("id");
 $userid = filterRequest("userid");
 
-$stmt = $con->prepare("
-    SELECT itemsviews1.*, 1 AS favorite 
-    FROM itemsviews1
-    INNER JOIN favorite 
-    ON favorite.favorite_id = itemsviews1.item_ID 
-    AND favorite.user_id = :userid
-    WHERE categoies_ID = :categoriesid
-    
-    UNION ALL
-    
-    SELECT *, 0 AS favorite 
-    FROM itemsviews1
-    WHERE categoies_ID = :categoriesid 
-    AND item_ID NOT IN (
-        SELECT itemsviews1.item_ID 
-        FROM itemsviews1
-        INNER JOIN favorite 
-        ON favorite.favorite_id = itemsviews1.item_ID 
-        AND favorite.user_id = :userid
-    )
-"
-);
+$stmt = $con->prepare("SELECT itemsviews1.*, 1 as favorite 
+                       FROM itemsviews1
+                       INNER JOIN favorite ON favorite.item_id = itemsviews1.item_id AND favorite.user_id = :userid
+                       WHERE categoies_ID = :categoriesid
 
+                       UNION ALL
+
+                       SELECT *, 0 as favorite 
+                       FROM itemsviews1
+                       WHERE categoies_ID = :categoriesid 
+                       AND item_id NOT IN (
+                           SELECT itemsviews1.item_id 
+                           FROM itemsviews1 
+                           INNER JOIN favorite ON favorite.item_id = itemsviews1.item_id 
+                           AND favorite.user_id = :userid
+                       )");
+
+// ربط المتغيرات بشكل صحيح
 $stmt->bindParam(":categoriesid", $categoriesid, PDO::PARAM_INT);
 $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
 
